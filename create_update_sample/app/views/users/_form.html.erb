@@ -1,0 +1,62 @@
+<%= form_for(@user) do |f| %>
+  <% if @user.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+      <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+  <%= f.label :email %>
+  <%= f.text_field :email %>
+
+  <% if action == "regist" %>
+    regist 
+  <% end %>
+  <% if action == "update" %>
+    Update
+    <table>
+      <tr>
+        <th>title</th>
+        <th>content</th>
+      </tr>
+    <% (0..5).each do |i| %>
+      <% if @comments.present? && @comments[i].present? %>
+        <!-- 既存データ -->
+        <%= f.fields_for 'comments[]', @comments[i], index: @comments[i].id || "x#{i}" do |c| %>
+          <tr id="comment<%=i+1%>">
+            <%= c.hidden_field :id, :id => "id#{i+1}", :value => @comments[i].id %>
+            <td>
+            <%= c.text_field :title, :id => "title#{i+1}", :value => @comments[i].title %>
+            </td>
+            <td>
+            <%= c.text_field :content, :id => "content#{i+1}", :value => @comments[i].content %>
+            </td>
+          </tr>
+        <% end %>
+      <% else %>
+        <!-- 新規データ -->
+        <tr id="comment<%=i+1%>">
+          <input id="id<%=i+1%>" name="user[comments][x<%=i+1%>][id]" type="hidden"/>
+          <td>
+          <input id="title<%=i+1%>" name="user[comments][x<%=i+1%>][title]" />
+          </td>
+          <td>
+          <input id="content<%=i+1%>" name="user[comments][x<%=i+1%>][content]" />
+          </td>
+        </tr>
+      <% end %>
+    <% end %>
+    </table>
+  <% end %>
+
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>
